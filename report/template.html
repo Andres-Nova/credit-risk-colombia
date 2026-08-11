@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riesgo Crediticio Colombia — Reporte</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      max-width: 1100px; margin: auto; padding: 2rem;
+      color: #333; line-height: 1.6; background: #fafafa;
+    }
+    h1 { color: #1B3A6B; font-size: 2rem; margin-bottom: 0.5rem; }
+    h2 {
+      color: #1D5BA6; font-size: 1.35rem;
+      border-bottom: 2px solid #1D5BA6; padding-bottom: 4px;
+      margin: 2rem 0 1rem;
+    }
+    h3 { color: #333; font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
+    p { margin-bottom: 0.75rem; }
+    a { color: #1D5BA6; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem; }
+    th, td { border: 1px solid #ddd; padding: 8px 14px; text-align: left; }
+    th { background: #1B3A6B; color: white; }
+    tr:nth-child(even) { background: #f2f6fc; }
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem; margin: 1.5rem 0;
+    }
+    .kpi {
+      background: #EAF1FB; border-radius: 8px; padding: 1.25rem;
+      text-align: center; border: 1px solid #C5D8F5;
+    }
+    .kpi-value { font-size: 2.2rem; font-weight: 700; color: #1B3A6B; }
+    .kpi-label { font-size: 0.82rem; color: #666; margin-top: 4px; }
+    .nota {
+      background: #fff3cd; border-left: 4px solid #ffc107;
+      padding: 1rem 1.25rem; border-radius: 4px; margin: 1rem 0;
+      font-size: 0.92rem;
+    }
+    .semaforo-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1rem; margin: 1rem 0;
+    }
+    .semaforo-card {
+      border-radius: 8px; padding: 1rem; text-align: center;
+    }
+    .semaforo-rojo  { background: #fdecea; border: 2px solid #F44336; }
+    .semaforo-amarillo { background: #fff8e1; border: 2px solid #FF9800; }
+    .semaforo-verde { background: #e8f5e9; border: 2px solid #4CAF50; }
+    .plot-container { width: 100%; overflow-x: auto; margin: 1rem 0; }
+    footer {
+      margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #ddd;
+      font-size: 0.82rem; color: #888; text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📊 Riesgo Crediticio — Colombia</h1>
+<p>
+  Análisis de riesgo crediticio con contextualización colombiana.
+  Comparación de 4 modelos ML, explicabilidad SHAP y scorecard 300-850.
+</p>
+
+<div class="nota">
+  <strong>Origen de los datos:</strong> Los datos base provienen de
+  <a href="https://www.kaggle.com/c/GiveMeSomeCredit" target="_blank">Give Me Some Credit (Kaggle, 2011)</a> —
+  150.000 registros con target observado (<em>default en 2 años</em>). Las variables han sido renombradas
+  al español y enriquecidas con features de contexto colombiano: estrato socioeconómico, DTF histórica
+  del Banco de la República, capacidad de pago e historial de mora relativo.
+  El target es observado, no sintético.
+</div>
+
+<h2>KPIs del modelo</h2>
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-value">{{ total_registros }}</div>
+    <div class="kpi-label">Registros analizados</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-value">{{ tasa_default }}</div>
+    <div class="kpi-label">Tasa de default</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-value">{{ mejor_auc }}</div>
+    <div class="kpi-label">AUC-ROC — {{ mejor_modelo }}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-value">{{ mejor_ks }}</div>
+    <div class="kpi-label">KS Statistic</div>
+  </div>
+</div>
+
+<h2>Semáforo de riesgo crediticio</h2>
+<div class="semaforo-grid">
+  <div class="semaforo-card semaforo-rojo">
+    <strong>🔴 Score ≤ 500</strong><br>Riesgo ALTO
+  </div>
+  <div class="semaforo-card semaforo-amarillo">
+    <strong>🟡 Score 501-650</strong><br>Riesgo MEDIO
+  </div>
+  <div class="semaforo-card semaforo-verde">
+    <strong>🟢 Score > 650</strong><br>Riesgo BAJO
+  </div>
+</div>
+
+<h2>Comparación de modelos</h2>
+{{ tabla_modelos }}
+
+<h2>Distribución de ingresos por Default</h2>
+<div class="plot-container">
+{{ grafica_eda }}
+</div>
+
+<h2>Curva ROC — modelo ganador</h2>
+<div class="plot-container">
+{{ grafica_roc }}
+</div>
+
+<h2>Metodología</h2>
+<h3>Pipeline de datos</h3>
+<ul>
+  <li><strong>Limpieza:</strong> imputación de ingresos nulos por grupo de edad, cap de utilización rotativa a 1.0, eliminación de edades fuera de rango (18-100), deduplicación</li>
+  <li><strong>Renombramiento:</strong> 11 variables originales traducidas al español con semántica colombiana</li>
+</ul>
+
+<h3>Features colombianas (6 nuevas variables)</h3>
+<table>
+  <tr><th>Feature</th><th>Descripción</th></tr>
+  <tr><td>estrato_simulado</td><td>Estrato socioeconómico 1-6 por percentil de ingreso (calibrado DANE)</td></tr>
+  <tr><td>tasa_dtf_vigente</td><td>DTF histórica 2005-2010 del Banco de la República (4.8%)</td></tr>
+  <tr><td>capacidad_pago</td><td>Ingreso disponible después de deudas: ingreso × (1 − ratio_deuda)</td></tr>
+  <tr><td>carga_financiera</td><td>Historial de mora relativo al número de líneas de crédito</td></tr>
+  <tr><td>segmento_edad</td><td>Joven (18-30), Adulto (31-55), Senior (56+)</td></tr>
+  <tr><td>riesgo_mora_acumulado</td><td>Score ponderado: 90d×3 + 60d×2 + 30d×1</td></tr>
+</table>
+
+<h3>Modelos evaluados</h3>
+<table>
+  <tr><th>Modelo</th><th>Manejo de desbalance</th></tr>
+  <tr><td>Regresión Logística</td><td>class_weight='balanced'</td></tr>
+  <tr><td>Random Forest</td><td>class_weight='balanced'</td></tr>
+  <tr><td>XGBoost</td><td>scale_pos_weight=13.9</td></tr>
+  <tr><td>LightGBM</td><td>is_unbalance=True</td></tr>
+</table>
+
+<h3>Scorecard 300-850</h3>
+<p>
+  La probabilidad de default del modelo ganador se transforma a score estilo FICO.
+  Punto de calibración: score 600 = odds 19:1 (≈ 5% mora). Factor PDO = 20 puntos
+  por duplicar las odds. Ver notebook 05 para el detalle completo.
+</p>
+
+<footer>
+  <p>Datos: Give Me Some Credit (Kaggle) — adaptados con contexto colombiano</p>
+</footer>
+
+</body>
+</html>

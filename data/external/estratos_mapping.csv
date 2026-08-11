@@ -1,0 +1,7 @@
+percentil_ingreso_min,percentil_ingreso_max,estrato
+0,10,1
+10,25,2
+25,50,3
+50,70,4
+70,85,5
+85,100,6

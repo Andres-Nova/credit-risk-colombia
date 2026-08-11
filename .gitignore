@@ -1,0 +1,23 @@
+# Datos (NO commitear)
+data/raw/
+data/processed/
+
+# Entornos
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Herramientas de desarrollo (NO commitear)
+.claude/
+CLAUDE.md
+*.swp
+.DS_Store
+
+# Kaggle
+kaggle.json
+
+# Modelos intermedios (solo commitear best_model.pkl y preprocessor.pkl)
+models/interim_*.pkl
+models/cv_results_*.pkl

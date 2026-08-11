@@ -1,0 +1,48 @@
+name: generar-reporte
+
+on:
+  workflow_dispatch:
+    inputs:
+      descripcion:
+        description: 'Motivo de la actualización del reporte'
+        required: false
+        default: 'Actualización manual del reporte'
+
+jobs:
+  reporte:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Descargar datos de Kaggle
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        run: |
+          pip install kaggle
+          kaggle competitions download -c GiveMeSomeCredit
+          unzip -o GiveMeSomeCredit.zip -d data/raw/
+
+      - name: Generar reporte
+        run: python src/report/generate_report.py
+
+      - name: Publicar reporte en GitHub Pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add report/index.html
+          git diff --staged --quiet || \
+            git commit -m "docs: actualizar reporte GitHub Pages"
+          git push

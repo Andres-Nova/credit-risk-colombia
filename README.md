@@ -6,7 +6,7 @@ El dataset base es [Give Me Some Credit](https://www.kaggle.com/c/GiveMeSomeCred
 
 ## Demo
 
-- **Dashboard interactivo:** *(pendiente — Streamlit Cloud)*
+- **Dashboard interactivo:** [credit-risk-colombia.streamlit.app](https://credit-risk-colombia.streamlit.app/)
 - **Reporte completo:** *(pendiente — GitHub Pages)*
 
 ## Resultados

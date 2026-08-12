@@ -4,7 +4,6 @@ import pandas as pd
 from sklearn.metrics import (
     roc_auc_score, average_precision_score, roc_curve
 )
-import shap
 
 
 def calcular_ks(y_true: np.ndarray, y_proba: np.ndarray) -> float:
@@ -87,6 +86,7 @@ def calcular_shap_values(modelo, X_muestra: pd.DataFrame) -> tuple:
 
     Retorna (shap_values, explainer, X_transformado).
     """
+    import shap  # import lazy — solo cuando se necesita SHAP
     # El modelo es un Pipeline sklearn — extraer pasos
     clasificador = modelo.named_steps['modelo']
     preprocesador = modelo.named_steps['prep']

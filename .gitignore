@@ -1,6 +1,9 @@
-# Datos (NO commitear)
+# Datos crudos (NO commitear)
 data/raw/
-data/processed/
+
+# Datos procesados — solo el parquet de features va al repo
+data/processed/*.csv
+data/processed/*.json
 
 # Entornos
 .venv/

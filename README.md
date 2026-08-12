@@ -16,6 +16,17 @@ Comparación de 4 modelos ML para predecir default crediticio, con contexto colo
 | Random Forest | 0.8577 | 0.5629 | 0.7154 | 0.3812 |
 | Regresión Logística | 0.8466 | 0.5458 | 0.6932 | 0.3665 |
 
+## Modelos comparados
+
+| Modelo | Por qué se incluye |
+|---|---|
+| Regresión Logística | Baseline interpretable, base del scorecard tradicional |
+| Random Forest | Ensemble robusto, no requiere escalar variables |
+| XGBoost | Boosting secuencial, fuerte con datos tabulares desbalanceados |
+| LightGBM ⭐ | Boosting por hojas, más rápido y mejor AUC que XGBoost en este dataset |
+
+Todos incluyen manejo explícito del desbalance de clases (93% no-default / 7% default).
+
 ## Datos
 
 Base: [Give Me Some Credit](https://www.kaggle.com/c/GiveMeSomeCredit) (Kaggle, 150k registros, target observado).

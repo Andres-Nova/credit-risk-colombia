@@ -9,9 +9,12 @@ Comparación de 4 modelos ML para predecir default crediticio, con contexto colo
 
 ## Resultados
 
-| Modelo | AUC-ROC | KS | Gini |
-|---|---|---|---|
-| *Pendiente tras entrenamiento* | | | |
+| Modelo | AUC-ROC | KS | Gini | PR-AUC |
+|---|---|---|---|---|
+| **LightGBM** ⭐ | **0.8604** | **0.5706** | **0.7208** | **0.3956** |
+| XGBoost | 0.8580 | 0.5642 | 0.7159 | 0.3910 |
+| Random Forest | 0.8577 | 0.5629 | 0.7154 | 0.3812 |
+| Regresión Logística | 0.8466 | 0.5458 | 0.6932 | 0.3665 |
 
 ## Datos
 

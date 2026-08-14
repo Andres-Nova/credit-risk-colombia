@@ -1,5 +1,6 @@
 """Página 1: Resumen del portafolio crediticio."""
 import streamlit as st
+from estilo import aplicar_estilo
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go

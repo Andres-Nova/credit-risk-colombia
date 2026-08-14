@@ -1,5 +1,6 @@
 """Página 2: Simulador de score crediticio individual."""
 import streamlit as st
+from estilo import aplicar_estilo
 import pandas as pd
 import numpy as np
 import joblib

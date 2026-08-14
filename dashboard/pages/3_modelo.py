@@ -1,5 +1,6 @@
 """Página 3: Análisis técnico del modelo — comparación de los 4 modelos."""
 import streamlit as st
+from estilo import aplicar_estilo
 import pandas as pd
 import numpy as np
 import joblib

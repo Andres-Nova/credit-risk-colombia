@@ -1,6 +1,6 @@
 """Página 1: Resumen del portafolio crediticio."""
 import streamlit as st
-from estilo import aplicar_estilo
+from estilo import aplicar_estilo, toggle_tema_sidebar, aplicar_tema_fig, colores_tematicos
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -13,6 +13,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from src.models.evaluate import probabilidad_a_score, calcular_ks
 from src.data.preprocess import dividir_datos
 from sklearn.metrics import roc_auc_score
+
+toggle_tema_sidebar()
+aplicar_estilo()
 
 st.title("📈 Resumen del Portafolio")
 
@@ -49,21 +52,25 @@ try:
 
     # ── Gráficas ────────────────────────────────────────────────────────────
     col_a, col_b = st.columns(2)
+    c = colores_tematicos()
 
     with col_a:
         st.subheader("Distribución de scores")
         fig_score = px.histogram(
             x=scores,
             color=[str(d) for d in y_test.values],
-            labels={'x': 'Score crediticio (300-850)', 'color': 'Default'},
+            labels={'x': 'Score crediticio (300–850)', 'color': 'Default'},
             title='Score crediticio por Default',
-            barmode='overlay', opacity=0.7, nbins=50,
-            color_discrete_map={'0': '#2196F3', '1': '#F44336'},
+            barmode='overlay', opacity=0.75, nbins=50,
+            color_discrete_map={'0': c["secundario"], '1': c["peligro"]},
         )
-        fig_score.add_vline(x=500, line_dash='dash', line_color='#F44336',
-                           annotation_text='Rojo ≤500')
-        fig_score.add_vline(x=650, line_dash='dash', line_color='#4CAF50',
-                           annotation_text='Verde >650')
+        fig_score.add_vline(x=500, line_dash='dash', line_color=c["peligro"],
+                            annotation_text='Límite alto ≤500',
+                            annotation_font_color=c["peligro"])
+        fig_score.add_vline(x=650, line_dash='dash', line_color=c["exito"],
+                            annotation_text='Bajo riesgo >650',
+                            annotation_font_color=c["exito"])
+        aplicar_tema_fig(fig_score)
         st.plotly_chart(fig_score, use_container_width=True)
 
     with col_b:
@@ -73,10 +80,12 @@ try:
         fig_estrato = px.bar(
             mora_estrato, x='Estrato', y='Tasa de mora',
             title='Tasa de Mora por Estrato Socioeconómico',
-            color='Tasa de mora', color_continuous_scale='RdYlGn_r',
+            color='Tasa de mora',
+            color_continuous_scale='Greys',
             labels={'Tasa de mora': 'Tasa de mora'},
         )
         fig_estrato.update_layout(yaxis_tickformat='.1%')
+        aplicar_tema_fig(fig_estrato)
         st.plotly_chart(fig_estrato, use_container_width=True)
 
     # ── Top features ────────────────────────────────────────────────────────
@@ -91,8 +100,10 @@ try:
         fig_fi = px.bar(
             x=importancias.values, y=importancias.index,
             orientation='h', title=f'Feature Importances — {nombre_clase}',
-            color=importancias.values, color_continuous_scale='Blues',
+            color=importancias.values,
+            color_continuous_scale='Greys',
         )
+        aplicar_tema_fig(fig_fi)
         st.plotly_chart(fig_fi, use_container_width=True)
     else:
         st.info("Feature importances no disponibles para este tipo de modelo.")

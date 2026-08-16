@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from estilo import mostrar_header, mostrar_footer
+from estilo import mostrar_header, mostrar_footer, toggle_tema_sidebar
 
 st.set_page_config(
     page_title="Riesgo Crediticio — Colombia",
@@ -14,6 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+toggle_tema_sidebar()
 mostrar_header(
     titulo="Dashboard de Riesgo Crediticio — Colombia",
     emoji="📊",

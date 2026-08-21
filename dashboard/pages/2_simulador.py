@@ -8,6 +8,35 @@ import plotly.graph_objects as go
 import sys
 from pathlib import Path
 
+# Mapa: nombre interno de feature → descripción en lenguaje llano
+_FEATURE_DESC = {
+    "utilizacion_credito_rotativo":  "uso de tarjetas de crédito",
+    "edad":                          "edad del solicitante",
+    "veces_mora_30_59_dias":         "historial de moras leves (30-59 días)",
+    "relacion_deuda_ingreso":        "carga de deuda respecto al ingreso",
+    "ingreso_mensual":               "nivel de ingresos",
+    "num_lineas_credito":            "número de líneas de crédito abiertas",
+    "veces_mora_90_dias":            "historial de moras graves (+90 días)",
+    "num_creditos_hipotecarios":     "créditos hipotecarios activos",
+    "veces_mora_60_89_dias":         "historial de moras moderadas (60-89 días)",
+    "num_dependientes":              "número de dependientes económicos",
+    "capacidad_pago":                "capacidad de pago calculada",
+    "carga_financiera":              "carga financiera total",
+    "riesgo_mora_acumulado":         "riesgo de mora acumulado histórico",
+    "segmento_edad":                 "segmento de edad",
+    "estrato":                       "estrato socioeconómico estimado",
+}
+
+def _nombre_legible(feature_raw: str) -> str:
+    """Convierte 'num__utilizacion_credito_rotativo' → descripción legible."""
+    nombre = (
+        feature_raw
+        .replace("num__", "")
+        .replace("cat__", "")
+        .replace("remainder__", "")
+    )
+    return _FEATURE_DESC.get(nombre, nombre.replace("_", " "))
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.models.evaluate import probabilidad_a_score, calcular_shap_values
@@ -168,5 +197,26 @@ if enviado:
                 "Valores SHAP: miden cuánto contribuye cada variable a aumentar (+) "
                 "o reducir (-) la probabilidad de default."
             )
+
+            # ── Análisis textual en lenguaje llano ────────────────────────
+            top3 = importancias.abs().nlargest(3)
+            lineas = []
+            for feat, _ in top3.items():
+                v = importancias[feat]
+                nombre = _nombre_legible(feat)
+                signo = "+" if v > 0 else ""
+                accion = "**aumenta** el riesgo" if v > 0 else "**reduce** el riesgo"
+                lineas.append(f"- **{nombre.capitalize()}**: {accion} ({signo}{v:.3f})")
+
+            factor_principal = _nombre_legible(top3.index[0])
+            val_principal = importancias[top3.index[0]]
+            direccion = "aumenta" if val_principal > 0 else "reduce"
+
+            st.markdown(
+                f"**Lectura del modelo:** El factor que más {direccion} el riesgo "
+                f"en este perfil es el **{factor_principal}**.\n\n"
+                f"Top 3 variables con mayor peso:\n" + "\n".join(lineas)
+            )
+
         except Exception as e:
             st.info(f"Explicación SHAP no disponible para este modelo: {e}")

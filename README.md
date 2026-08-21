@@ -1,4 +1,9 @@
-# Riesgo Crediticio — Colombia
+# 💳 Riesgo Crediticio — Colombia
+
+[![Demo LIVE](https://img.shields.io/badge/Demo-LIVE-brightgreen?style=flat-square&logo=streamlit)](https://credit-risk-colombia.streamlit.app/)
+[![Python](https://img.shields.io/badge/Python-3.12-blue?style=flat-square&logo=python)](https://python.org)
+[![LightGBM](https://img.shields.io/badge/LightGBM-AUC%200.86-lightgrey?style=flat-square)](https://lightgbm.readthedocs.io)
+[![Tests](https://img.shields.io/badge/Tests-8%20passing-brightgreen?style=flat-square)](tests/)
 
 Construí este proyecto para demostrar un pipeline completo de ciencia de datos aplicado a un problema real de banca: predecir qué solicitantes de crédito entrarán en mora, y traducir esa predicción en un número accionable para el oficial de crédito.
 
@@ -149,3 +154,10 @@ unzip GiveMeSomeCredit.zip -d data/raw/
 pytest tests/ -v
 # 8 tests: limpieza de datos, ingeniería de features, integridad del split
 ```
+
+---
+
+## ✍️ Autor
+
+**Andres Nova** — AI Solutions Architect  
+[andres-nova.github.io](https://andres-nova.github.io) · [LinkedIn](https://linkedin.com/in/andres-nova-data)
